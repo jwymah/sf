@@ -1,0 +1,74 @@
+This was created as a maven project on OSX in netbeans and will be exported from netbeans for submission.
+java version information:
+    java version "1.8.0_60"
+    Java(TM) SE Runtime Environment (build 1.8.0_60-b27)
+    Java HotSpot(TM) 64-Bit Server VM (build 25.60-b23, mixed mode)
+Main class entry point: Main.java
+
+
+1) Write a function that provides a ranked (high to low) list of alerts. You can
+represent an alert by a string “<net_friends>,<BUY|SELL>,<ticker>”, e.g.
+“5,SELL,GOOG” to indicate a net number of 5 friends selling GOOG.
+
+Implemented as FriendTradeAlerts.getFriendTradesLastWeek(String userId)
+Most of logic code in DataProcessor.java
+
+There is some sample data included in files used by the library functions which only have data for April.
+(by second Sunday of May of those trades will be filtered out)
+
+Assumptions made:
+    1. last week to be interpreted as 12am sunday of last week to 12am sunday of this week
+    2. stock tickers are not case-sensitive, buy/sell strings are also not case-sensitive
+    3. number of friend trades buy/sell added up can be stored in an int (memory would be an issue before this is a problem)
+
+
+
+2) Write code for a few key unit tests for your code.
+Included tests for DataProcessor.java and FriendTradeAlerts.java
+
+
+
+3) Enumerate other unit test scenarios (code not required).
+Empty unimplemented are in tests in DataProcessorTest and FriendTradeAlerts.
+Tests for other files might be:
+On DataLibrary (where the library functions lie)
+    1. assert that trades are provided in reverse-chronological order
+
+On TradeCounter
+    1. getCount() is returning proper values
+    2. adjust() is properly changing the object state
+    3. toString() is returning expected formats
+
+
+
+4) Provide the space and time complexity of your solution.
+let n = amount of friends that a user has (avg)
+let m = amount of trades per friend (avg)
+then
+time complexity: O(m*n)
+space complexity: O(m*n)
+
+Reasoning for time complexity:
+1. iterating over friends & friends trades and filtering then putting into a map for counting:
+    constant time per trade, at most n*m trades if all trades in m are in the specified date range
+2. sorting & filtering the map's value set: 
+    let t = amount of unique stock tickers
+    case 1: t is unbounded
+        then there may be n*m trades with different tickers, leading to an already sorted list.
+        The closer t used in the map is to n*m, the closer value set is to being already sorted.
+
+    case 2: t is bounded (the one we're considering)
+        then there will be at most t entries in the map, which will take O(tlog(t)) time to sort.
+
+3. converting set to string:
+    at most n*m TradeCounter objects, constant time per object
+
+Reasoning for space complexity:
+1. all trades from the lib method are loaded into a list of Strings:
+    n*m Strings
+2. Strings are converted to Trade objects
+    n*m Trade Objects
+3. trades are iterated over and placed into a map
+    at most n*m different TradeCounter
+4. TradeCounter from map are sorted and placed into list
+    at most n*m TradeCounter in the list
